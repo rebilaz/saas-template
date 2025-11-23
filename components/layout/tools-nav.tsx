@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import { CreditCard, Home } from "lucide-react";
+
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import { UserMenu } from "./UserMenu";
 
 interface NavItem {
@@ -16,91 +16,39 @@ interface NavItem {
 
 const items: NavItem[] = [
   {
-    href: "/saas/nichefinder",
-    label: "Recherche de niche",
-    icon: (
-      <Image
-        src="/icons/niche.svg"
-        alt=""
-        width={22}
-        height={22}
-        className="shrink-0"
-      />
-    ),
+    href: "/saas",
+    label: "Dashboard",
+    icon: <Home className="h-5 w-5" />,
   },
   {
-    href: "/saas/thumbnail",
-    label: "Miniatures",
-    icon: (
-      <Image
-        src="/icons/thumbnail.svg"
-        alt=""
-        width={22}
-        height={22}
-        className="shrink-0"
-      />
-    ),
+    href: "/pricing",
+    label: "Pricing",
+    icon: <CreditCard className="h-5 w-5" />,
   },
-  
-{
-  href: "/saas/video",
-  label: "Métadonnées Vidéo",
-  icon: (
-    <Image
-      src="/icons/video-meta.svg"
-      alt=""
-      width={22}
-      height={22}
-      className="shrink-0"
-    />
-  ),
-},
-{
-    href: "/saas/extension",
-    label: "Extension",
-    icon: (
-      <Image
-        src="/icons/extension.svg"
-        alt=""
-        width={22}
-        height={22}
-        className="shrink-0"
-      />
-    ),
-  },
-
 ];
 
 export default function ToolsNav() {
   const pathname = usePathname() ?? "";
-  const [openMenu, setOpenMenu] = useState(false);
 
   return (
     <nav className="relative z-20 flex h-full w-full flex-col justify-between bg-slate-950/90 text-slate-100">
-
-      {/* ---------------- LOGO ---------------- */}
-      <div className="px-6 pt-10 pb-4 flex justify-center">
-        <div
-          className={cn(
-            "relative rounded-2xl bg-slate-900/40 overflow-hidden",
-            "w-[300px] h-[70px]",
-            "ring-10 ring-orange-500",
-            "shadow-lg shadow-orange-500/70",
-            "outline outline-1 outline-white/5"
-          )}
-        >
-          <Image
-            src="/logo.svg"
-            alt="YTScale logo"
-            fill
-            className="object-contain"
-            priority
-          />
+      <div className="px-6 pt-10 pb-6 flex justify-center">
+        <div className="flex w-full items-center gap-3 rounded-2xl border border-slate-800 bg-slate-900/60 px-5 py-4 shadow-lg shadow-slate-950/40">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500/15 text-sky-100 font-bold">
+            SaaS
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold leading-none text-slate-50">
+              Your SaaS Name
+            </p>
+            <p className="mt-1 text-[11px] text-slate-400">
+              Next.js + Supabase + Stripe
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* ---------------- NAVIGATION ---------------- */}
-      <ul className="mt-8 space-y-3 px-4">
+      <ul className="mt-4 space-y-3 px-4">
         {items.map((item, index) => {
           const isActive =
             pathname === item.href || pathname.startsWith(item.href + "/");
@@ -111,80 +59,54 @@ export default function ToolsNav() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
-                duration: 0.4,
-                delay: index * 0.06,
+                duration: 0.3,
+                delay: index * 0.05,
                 ease: [0.23, 1, 0.32, 1],
               }}
             >
               <Link href={item.href} className="block">
                 <motion.div
                   className={cn(
-                    "group relative w-full flex items-center gap-4 rounded-2xl px-5 py-4",
+                    "group relative flex w-full items-center gap-4 rounded-2xl px-5 py-4",
                     "transition-all duration-300"
                   )}
-                  whileHover={{ scale: isActive ? 1 : 1.02 }}
+                  whileHover={{ scale: isActive ? 1 : 1.01 }}
                   whileTap={{ scale: 0.98 }}
                 >
-
-                  {/* BG Active / Hover */}
-                  <motion.div
+                  <div
                     className={cn(
                       "absolute inset-0 rounded-2xl border transition-all duration-300",
                       isActive
-                        ? "bg-gradient-to-br from-slate-800/90 via-slate-800/70 to-slate-900/90 border-slate-700/50 shadow-xl shadow-orange-500/10"
-                        : "bg-slate-900/30 border-slate-800/30 group-hover:bg-slate-900/50 group-hover:border-slate-700/50 group-hover:shadow-lg group-hover:shadow-black/20"
+                        ? "border-sky-400/40 bg-slate-900/80 shadow-[0_12px_40px_rgba(56,189,248,0.15)]"
+                        : "border-slate-800/40 bg-slate-900/40 group-hover:border-slate-700 group-hover:bg-slate-900/70"
                     )}
-                    animate={
-                      isActive
-                        ? {
-                            boxShadow: [
-                              "0 20px 40px -12px rgba(251,146,60,0.1), 0 4px 6px -1px rgba(0,0,0,0.3)",
-                              "0 20px 40px -12px rgba(251,146,60,0.15), 0 4px 6px -1px rgba(0,0,0,0.3)",
-                              "0 20px 40px -12px rgba(251,146,60,0.1), 0 4px 6px -1px rgba(0,0,0,0.3)",
-                            ],
-                          }
-                        : {}
-                    }
-                    transition={{ duration: 2, repeat: Infinity }}
                   />
 
-                  {/* Barre latérale active */}
-                  {isActive && (
-                    <motion.div
-                      initial={{ scaleY: 0, opacity: 0 }}
-                      animate={{ scaleY: 1, opacity: 1 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="absolute left-0 top-4 bottom-4 w-1 rounded-r-full bg-gradient-to-b from-orange-400 via-rose-500 to-amber-400"
-                    >
-                      <div className="absolute inset-0 rounded-r-full blur-sm bg-gradient-to-b from-orange-400 via-rose-500 to-amber-400 opacity-60" />
-                    </motion.div>
-                  )}
-
-                  {/* ICON */}
-                  <motion.span
+                  <span
                     className={cn(
-                      "relative z-10 flex h-12 w-12 items-center justify-center rounded-xl border transition-all duration-300",
+                      "relative z-10 flex h-11 w-11 items-center justify-center rounded-xl border text-slate-100",
                       isActive
-                        ? "border-orange-400/30 bg-gradient-to-br from-orange-500/20 via-rose-500/15 to-transparent text-orange-100 shadow-lg shadow-orange-500/30"
-                        : "border-slate-800/60 bg-slate-950/80 text-slate-400 group-hover:border-slate-700/60 group-hover:bg-slate-900/90 group-hover:text-slate-200 group-hover:shadow-md group-hover:shadow-black/30"
+                        ? "border-sky-400/50 bg-sky-500/10"
+                        : "border-slate-800 bg-slate-950/70 group-hover:border-slate-700"
                     )}
                   >
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.07] via-transparent to-transparent" />
-                    <span className="relative">{item.icon}</span>
-                  </motion.span>
+                    {item.icon}
+                  </span>
 
-                  {/* LABEL */}
                   <div className="relative z-10 flex-1 text-left">
                     <span
                       className={cn(
-                        "block font-semibold tracking-tight text-sm transition-all duration-300",
-                        isActive
-                          ? "text-slate-50"
-                          : "text-slate-300 group-hover:text-slate-100"
+                        "block text-sm font-semibold tracking-tight",
+                        isActive ? "text-slate-50" : "text-slate-200"
                       )}
                     >
                       {item.label}
                     </span>
+                    {!isActive && (
+                      <span className="text-[11px] text-slate-500">
+                        Manage the core template pages
+                      </span>
+                    )}
                   </div>
                 </motion.div>
               </Link>
@@ -193,31 +115,9 @@ export default function ToolsNav() {
         })}
       </ul>
 
-      {/* ---------------- CRÉDITS ---------------- */}
       <div className="px-4 pb-6">
-        <button
-          className={cn(
-            "group relative w-full flex items-center justify-center gap-3",
-            "rounded-xl px-4 py-3",
-            "text-sm font-semibold",
-            "bg-gradient-to-br from-[#0d1117]/60 via-[#0d1117]/40 to-[#0d1117]/20",
-            "backdrop-blur-xl border border-white/5",
-            "shadow-[0_0_25px_-5px_rgba(255,115,0,0.35)]",
-            "hover:shadow-[0_0_35px_-6px_rgba(255,140,0,0.55)]",
-            "transition-all duration-300"
-          )}
-        >
-          <span className="relative z-10 text-slate-200 tracking-wide">
-            Crédits : <span className="text-orange-300 font-bold">4.55K</span>
-          </span>
-        </button>
+        <UserMenu name="Your Name" email="you@example.com" plan="Premium" />
       </div>
-
-      <UserMenu
-        name="Nom utilisateur"
-        email="email.connexion@exemple.com"
-        plan="Premium"
-      />
     </nav>
   );
 }

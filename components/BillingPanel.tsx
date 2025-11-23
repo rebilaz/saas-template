@@ -26,12 +26,10 @@ export function BillingPanel({
 }: BillingPanelProps) {
   const [tab, setTab] = useState<Tab>(initialTab);
 
-  // reset de l’onglet quand on ouvre
   useEffect(() => {
     if (open) setTab(initialTab);
   }, [open, initialTab]);
 
-  // ESC pour fermer
   useEffect(() => {
     if (!open) return;
 
@@ -72,60 +70,54 @@ export function BillingPanel({
               overflow-hidden
             "
           >
-            {/* Bouton fermer */}
             <button
               onClick={onClose}
-              className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border border-slate-700 bg-[#181b25] text-slate-300 hover:text-slate-50 hover:border-slate-400 transition"
+              className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border border-slate-700 bg-[#181b25] text-slate-300 transition hover:border-slate-400 hover:text-slate-50"
             >
-              <span className="sr-only">Fermer</span>
-              ✕
+              <span className="sr-only">Close</span>
+              ×
             </button>
 
-            {/* Contenu en 2 colonnes */}
             <div className="grid min-h-[420px] grid-cols-1 md:grid-cols-[230px,minmax(0,1fr)]">
-              {/* SIDEBAR GAUCHE */}
               <aside className="border-b md:border-b-0 md:border-r border-[#262a37] bg-[#11131b] pt-14 md:pt-12 pb-4">
                 <nav className="flex flex-col gap-2 px-3 md:px-4">
                   <SidebarItem
-                    label="Abonnement & facturation"
+                    label="Subscription & billing"
                     active={tab === "billing"}
                     onClick={() => setTab("billing")}
                   />
                   <SidebarItem
-                    label="Paramètres du compte"
+                    label="Account settings"
                     active={tab === "account"}
                     onClick={() => setTab("account")}
                   />
                 </nav>
               </aside>
 
-              {/* PANE CONTENU DROITE */}
               <section className="pt-14 md:pt-8 pb-6 px-5 sm:px-7 space-y-6">
                 {tab === "billing" ? (
                   <>
                     <div className="space-y-1">
                       <h2 className="text-lg sm:text-xl font-semibold text-slate-50">
-                        Abonnement &amp; facturation
+                        Subscription & billing
                       </h2>
                       <p className="text-xs sm:text-sm text-slate-400 max-w-xl">
-                        Consulte ton plan actuel, ton statut et gère la
-                        facturation pour YTScale.
+                        Connect this panel to your Stripe customer portal to
+                        handle upgrades, cancellations, and payment methods.
                       </p>
                     </div>
 
-                    {/* Carte récap plan */}
                     <div className="rounded-2xl border border-[#262a37] bg-[#181b25] px-4 py-4 sm:px-5 sm:py-5 space-y-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500/10 text-sm font-semibold text-orange-300 border border-orange-400/40">
-                          YT
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-500/10 text-sm font-semibold text-sky-200 border border-sky-400/40">
+                          SaaS
                         </div>
                         <div className="space-y-0.5">
                           <p className="text-sm font-semibold text-slate-50">
                             {prettyPlan}
                           </p>
                           <p className="text-[11px] text-slate-400">
-                            Email :{" "}
-                            <span className="text-slate-200">{email}</span>
+                            Email: <span className="text-slate-200">{email}</span>
                           </p>
                         </div>
                         {isAdmin && (
@@ -145,16 +137,15 @@ export function BillingPanel({
                       <div className="h-px bg-[#262a37]" />
 
                       <div className="space-y-2.5 text-xs sm:text-[13px]">
-                        <InfoRow label="Type d’abonnement" value={prettyPlan} />
-                        <InfoRow label="Statut" value="Actif" />
+                        <InfoRow label="Plan" value={prettyPlan} />
+                        <InfoRow label="Status" value="Active" />
                         <InfoRow
-                          label="Renouvellement"
-                          value="Mensuel (modifiable sur la page de facturation)"
+                          label="Renewal"
+                          value="Connect Stripe customer portal to manage"
                         />
                       </div>
                     </div>
 
-                    {/* Actions */}
                     <div className="rounded-2xl border border-[#262a37] bg-[#181b25] px-4 py-4 sm:px-5 sm:py-5 space-y-3">
                       <p className="text-[11px] uppercase tracking-[0.16em] text-slate-400">
                         Actions
@@ -163,44 +154,44 @@ export function BillingPanel({
                       <div className="flex flex-col gap-2 sm:flex-row">
                         <button
                           type="button"
-                          className="w-full rounded-xl bg-gradient-to-r from-orange-500 via-amber-400 to-orange-500 py-2.5 text-xs sm:text-sm font-semibold text-slate-950 shadow-[0_0_32px_rgba(249,115,22,0.7)] hover:brightness-110 transition"
+                          className="w-full rounded-xl bg-gradient-to-r from-sky-500 via-cyan-400 to-sky-500 py-2.5 text-xs sm:text-sm font-semibold text-slate-950 shadow-[0_0_32px_rgba(14,165,233,0.45)] hover:brightness-110 transition"
                         >
-                          Gérer la facturation
+                          Open billing portal
                         </button>
                         <button
                           type="button"
                           className="w-full rounded-xl border border-slate-700 bg-[#131620] py-2.5 text-xs sm:text-sm font-medium text-slate-200 hover:bg-[#1b1f2c] transition"
                         >
-                          Mettre à jour le moyen de paiement
+                          Update payment method
                         </button>
                       </div>
 
                       <p className="text-[11px] text-slate-500 pt-1">
-                        Pour toute question de facturation, contacte le support
-                        YTScale.
+                        Replace these actions with your Stripe billing portal
+                        URL or an API route that returns it.
                       </p>
                     </div>
 
                     <p className="text-[11px] text-slate-500 pt-2">
-                      Connecté en tant que{" "}
+                      Signed in as{" "}
                       <span className="text-slate-200 font-medium">{name}</span>.
                     </p>
                   </>
                 ) : (
                   <>
-                    {/* Onglet Paramètres du compte */}
                     <div className="space-y-1">
                       <h2 className="text-lg sm:text-xl font-semibold text-slate-50">
-                        Paramètres du compte
+                        Account settings
                       </h2>
                       <p className="text-xs sm:text-sm text-slate-400 max-w-xl">
-                        Gère les informations principales de ton compte YTScale.
+                        Extend this section to let users manage profile data tied
+                        to Supabase.
                       </p>
                     </div>
 
                     <div className="rounded-2xl border border-[#262a37] bg-[#181b25] px-4 py-4 sm:px-5 sm:py-5 space-y-4">
                       <div className="space-y-3 text-xs sm:text-sm">
-                        <InfoRow label="Nom" value={name} />
+                        <InfoRow label="Name" value={name} />
                         <InfoRow label="Email" value={email} />
                       </div>
 
@@ -208,7 +199,7 @@ export function BillingPanel({
                         type="button"
                         className="mt-2 inline-flex items-center justify-center rounded-xl border border-slate-700 bg-[#131620] px-4 py-2.5 text-xs sm:text-sm font-medium text-slate-200 hover:bg-[#1b1f2c] transition"
                       >
-                        Modifier les informations du compte
+                        Update account details
                       </button>
                     </div>
                   </>
@@ -221,8 +212,6 @@ export function BillingPanel({
     </AnimatePresence>
   );
 }
-
-/* ---------- Sous-composants ---------- */
 
 function SidebarItem({
   label,

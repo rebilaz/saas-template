@@ -1,7 +1,13 @@
 "use client";
 
+import { Suspense } from "react";
+
 import AuthSection from "@/components/AuthSection";
 
 export default function LoginPage() {
-  return <AuthSection />;
+  return (
+    <Suspense fallback={null}>
+      <AuthSection />
+    </Suspense>
+  );
 }

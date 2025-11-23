@@ -2,36 +2,39 @@ interface StripePlan {
   name: string;
   planId: number;
   priceInUSD: number;
-  realPriceInUSD?: number;
-  monthlyGeneration: number;
+  compareAtPrice?: number;
   priceId: string;
   hasTrial: boolean;
 }
 
-export type StripePlanKeys = "StarterMonthly" | "StarterAnnualy";
+export type StripePlanKeys = "ProMonthly" | "ProYearly";
 
 type StripePlans = {
   [key in StripePlanKeys]: StripePlan;
 };
 
+const monthlyPriceId =
+  process.env.NEXT_PUBLIC_STRIPE_PRICE_MONTHLY || "price_monthly_placeholder";
+const yearlyPriceId =
+  process.env.NEXT_PUBLIC_STRIPE_PRICE_YEARLY || "price_yearly_placeholder";
+
 export const STRIPE_PLANS: StripePlans = {
-  StarterMonthly: {
-    name: "7 days trial",
+  ProMonthly: {
+    name: "Pro",
     planId: 1,
-    priceInUSD: 0,
-    realPriceInUSD: 19.99,
-    monthlyGeneration: 30,
-    priceId: "price_1OdCevHbY1putycV9eudGzcH",
+    priceInUSD: 29,
+    compareAtPrice: 39,
+    priceId: monthlyPriceId,
     hasTrial: true,
   },
-  StarterAnnualy: {
-    name: "Starter",
-    planId: 1,
-    priceInUSD: 14.99,
-    monthlyGeneration: 1000,
-    priceId: "price_1OdCfyHbY1putycVhKTq9Zqa",
-    hasTrial: false
-  }
+  ProYearly: {
+    name: "Pro Yearly",
+    planId: 2,
+    priceInUSD: 290,
+    compareAtPrice: 468,
+    priceId: yearlyPriceId,
+    hasTrial: true,
+  },
 };
 
 export function findPlanFromPriceId(priceId: string): StripePlan | null {

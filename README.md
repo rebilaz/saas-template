@@ -1,90 +1,65 @@
-<a href="https://precedent.dev">
-  <img alt="Precedent – Building blocks for your Next project" src="https://precedent.dev/opengraph-image">
-  <h1 align="center">Precedent</h1>
-</a>
+# SaaS Template (Next.js + Supabase + Stripe)
 
-<p align="center">
-  Building blocks for your Next project
-</p>
+Production-ready starter for a subscription SaaS: authentication via Supabase, Stripe Checkout, protected `/saas` area, and a minimal dashboard shell. Swap the name, add your keys, and ship.
 
-<p align="center">
-  <a href="https://twitter.com/steventey">
-    <img src="https://img.shields.io/twitter/follow/steventey?style=flat&label=steventey&logo=twitter&color=0bf&logoColor=fff" alt="Steven Tey Twitter follower count" />
-  </a>
-  <a href="https://github.com/steven-tey/precedent">
-    <img src="https://img.shields.io/github/stars/steven-tey/precedent?label=steven-tey%2Fprecedent" alt="Precedent repo star count" />
-  </a>
-</p>
+## Prerequisites
+- Node 18+
+- pnpm, npm, or yarn
+- Supabase project (URL + anon key)
+- Stripe account (publishable key, secret key, webhook secret, price IDs)
 
-<p align="center">
-  <a href="#introduction"><strong>Introduction</strong></a> ·
-  <a href="#one-click-deploy"><strong>One-click Deploy</strong></a> ·
-  <a href="#tech-stack--features"><strong>Tech Stack + Features</strong></a> ·
-  <a href="#author"><strong>Author</strong></a>
-</p>
-<br/>
-
-## Introduction
-
-Precedent is an opinionated collection of components, hooks, and utilities for your Next.js project.
-
-## One-click Deploy
-
-You can deploy this template to Vercel with the button below:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsteven-tey%2Fprecedent&project-name=precedent&repository-name=precedent&demo-title=Precedent&demo-description=An%20opinionated%20collection%20of%20components%2C%20hooks%2C%20and%20utilities%20for%20your%20Next%20project.&demo-url=https%3A%2F%2Fprecedent.dev&demo-image=https%3A%2F%2Fprecedent.dev%2Fopengraph-image&env=GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY&envDescription=How%20to%20get%20these%20env%20variables%3A&envLink=https%3A%2F%2Fgithub.com%2Fsteven-tey%2Fprecedent%2Fblob%2Fmain%2F.env.example&stores=%5B%7B"type"%3A"postgres"%7D%5D)
-
-You can also clone & create this repo locally with the following command:
-
+## Getting Started
+1) Install dependencies
 ```bash
-npx create-next-app precedent --example "https://github.com/steven-tey/precedent"
+# choose one
+pnpm install
+npm install
+yarn install
 ```
 
-## Tech Stack + Features
+2) Configure environment
+```bash
+cp env.example .env
+```
+Fill the values:
+- `NEXT_PUBLIC_APP_URL` – your site URL (http://localhost:3000 in dev)
+- `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` (optional, if you add server tasks)
+- `DATABASE_URL` (optional, if you add Prisma/Postgres access)
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` / `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET`
+- `NEXT_PUBLIC_STRIPE_PRICE_MONTHLY` / `NEXT_PUBLIC_STRIPE_PRICE_YEARLY` (Stripe price IDs used by checkout)
 
-https://user-images.githubusercontent.com/28986134/212368288-12f41e37-aa8c-4e0a-a542-cf6d23410a65.mp4
+3) Run the app
+```bash
+pnpm dev   # or npm run dev / yarn dev
+```
+Visit http://localhost:3000. The landing redirects to `/pricing`, auth flows go through `/auth/callback`, and the gated app lives under `/saas`.
 
-### Frameworks
+## Supabase Setup
+- Create a Supabase project and grab the URL + anon key.
+- Enable Email and Google providers (Auth → Providers). Add `http://localhost:3000/auth/callback` and your production URL to Redirect URLs.
+- Create a `profiles` table with `id` (uuid, auth.users FK), `email`, `role`, `subscription_status`, `trial_end` to match the template queries.
+- Optional: deploy an Edge Function `stripe-actions` that handles checkout/billing portal if you want to keep that flow (or replace with your own API route).
 
-- [Next.js](https://nextjs.org/) – React framework for building performant apps with the best developer experience
-- [Supabase Auth](https://supabase.com/auth) - Managed authentication with OAuth providers, magic links, and a Postgres-backed user store
-- [Prisma](https://www.prisma.io/) – Typescript-first ORM for Node.js
+## Stripe Setup
+- Create products/prices and use their IDs for `NEXT_PUBLIC_STRIPE_PRICE_MONTHLY` and `NEXT_PUBLIC_STRIPE_PRICE_YEARLY`.
+- Get your publishable key, secret key, and webhook secret; add them to `.env`.
+- Set the webhook endpoint to your handler (e.g. an Edge Function or Next.js Route Handler) for subscription events. This template assumes `stripe-actions` exists in Supabase; swap in your own endpoint if needed.
 
-### Platforms
+## Deployment (Vercel)
+1. Push the code to your repo.
+2. Create a new Vercel project from the repo.
+3. Add the same environment variables in Vercel.
+4. Set `NEXT_PUBLIC_APP_URL` to your production URL.
+5. Redeploy after updating Stripe webhook URL to the production domain.
 
-- [Vercel](https://vercel.com/) – Easily preview & deploy changes with git
-- [Vercel Postgres](https://vercel.com/postgres) – Serverless Postgres at the Edge
+## What’s Included
+- Next.js App Router + Tailwind base styles
+- Supabase client/server helpers and Auth callback route
+- Stripe checkout trigger (`/start-checkout`) and pricing UI
+- Protected `/saas` area with navigation, account menu, and billing panel scaffold
+- Placeholder logos/assets ready to replace with your brand
 
-### UI
-
-- [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS framework for rapid UI development
-- [Radix](https://www.radix-ui.com/) – Primitives like modal, popover, etc. to build a stellar user experience
-- [Framer Motion](https://framer.com/motion) – Motion library for React to animate components with ease
-- [Lucide](https://lucide.dev/) – Beautifully simple, pixel-perfect icons
-- [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) – Optimize custom fonts and remove external network requests for improved performance
-- [`ImageResponse`](https://beta.nextjs.org/docs/api-reference/image-response) – Generate dynamic Open Graph images at the edge
-- [`react-wrap-balancer`](https://github.com/shuding/react-wrap-balancer) – Simple React component that makes titles more readable
-
-### Hooks and Utilities
-
-- `useIntersectionObserver` –  React hook to observe when an element enters or leaves the viewport
-- `useLocalStorage` – Persist data in the browser's local storage
-- `useScroll` – React hook to observe scroll position ([example](https://github.com/steven-tey/precedent/blob/main/components/layout/navbar.tsx#L12))
-- `nFormatter` – Format numbers with suffixes like `1.2k` or `1.2M`
-- `capitalize` – Capitalize the first letter of a string
-- `truncate` – Truncate a string to a specified length
-- [`use-debounce`](https://www.npmjs.com/package/use-debounce) – Debounce a function call / state update
-
-### Code Quality
-
-- [TypeScript](https://www.typescriptlang.org/) – Static type checker for end-to-end typesafety
-- [Prettier](https://prettier.io/) – Opinionated code formatter for consistent code style
-- [ESLint](https://eslint.org/) – Pluggable linter for Next.js and TypeScript
-
-### Miscellaneous
-
-- [Vercel Analytics](https://vercel.com/analytics) – Track unique visitors, pageviews, and more in a privacy-friendly way
-
-## Author
-
-- Steven Tey ([@steventey](https://twitter.com/steventey))
+## Notes
+- Optional dependencies for AWS/OpenAI/ffmpeg have been removed; add only what you need.
+- Replace placeholder copy and links, and wire billing actions to your Stripe customer portal or backend endpoint.

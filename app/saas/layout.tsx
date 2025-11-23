@@ -1,9 +1,9 @@
-// app/saas/layout.tsx
 import { redirect } from "next/navigation";
-import { createSupabaseServer } from "@/lib/supabase/server";
-import { hasProAccess } from "@/lib/access";
+
 import ToolsNav from "@/components/layout/tools-nav";
-import { GeistSans } from "geist/font/sans";   // 👈 AJOUT
+import { hasProAccess } from "@/lib/access";
+import { createSupabaseServer } from "@/lib/supabase/server";
+import { GeistSans } from "geist/font/sans";
 
 export default async function SaasLayout({
   children,
@@ -26,10 +26,7 @@ export default async function SaasLayout({
   if (error || !hasProAccess(profile)) redirect("/pricing");
 
   return (
-    <div
-      className={`${GeistSans.className} flex w-full min-h-screen`} // 👈 police appliquée ici
-    >
-      {/* SIDEBAR GAUCHE — FULL HEIGHT + STICKY */}
+    <div className={`${GeistSans.className} flex w-full min-h-screen`}>
       <aside
         className="
           hidden md:block
@@ -45,10 +42,7 @@ export default async function SaasLayout({
         <ToolsNav />
       </aside>
 
-      {/* CONTENU À DROITE → scroll dans cette zone */}
-      <main className="flex-1 md:ml-64 px-6 lg:px-10 py-10">
-        {children}
-      </main>
+      <main className="flex-1 md:ml-64 px-6 lg:px-10 py-10">{children}</main>
     </div>
   );
 }

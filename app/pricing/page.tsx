@@ -1,33 +1,29 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
+
+import { AuthSection } from "@/components/AuthSection";
+import { PricingCard } from "@/components/PricingCard";
+import { useSupabaseUser } from "@/lib/hooks/use-supabase-user";
+import { supabaseClient } from "@/lib/supabaseClient";
 import { checkout } from "@/utils/stripe/checkout";
 import { STRIPE_PLANS } from "@/utils/stripe/configuration";
-import { useSupabaseUser } from "@/lib/hooks/use-supabase-user";
-import { PricingCard } from "@/components/PricingCard";
-import { AuthSection } from "@/components/AuthSection";
-import { AnimatePresence, motion } from "framer-motion";
-import { supabaseClient } from "@/lib/supabaseClient";
 
 export default function PricingPage() {
   const { user } = useSupabaseUser();
   const router = useRouter();
 
   const [isWaiting, setWaiting] = useState(false);
-
-  // popup auth
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authRedirectTo, setAuthRedirectTo] = useState<string | null>(null);
 
-  // On ne gère plus que le plan mensuel
-  const currentPlan = STRIPE_PLANS.StarterMonthly;
-  const oldPrice = STRIPE_PLANS.StarterMonthly.realPriceInUSD;
-
-  /* ----- HANDLERS ----- */
+  const currentPlan = STRIPE_PLANS.ProMonthly;
+  const compareAtPrice = currentPlan.compareAtPrice;
 
   const handleStartTrial = async () => {
-    const priceId = STRIPE_PLANS.StarterMonthly.priceId;
+    const priceId = currentPlan.priceId;
 
     if (!user) {
       const redirect = `/start-checkout?priceId=${priceId}`;
@@ -60,55 +56,53 @@ export default function PricingPage() {
     } catch (e) {
       console.error(e);
     } finally {
-      router.push("/"); // ou "/pricing" selon ce que tu préfères
+      router.push("/");
     }
   };
-
-  /* ----- RENDER ----- */
 
   return (
     <>
       <div className="z-10 w-full px-4 py-10 lg:px-10">
         <div className="mx-auto max-w-4xl space-y-10 text-center text-slate-100">
-          {/* Top bar avec bouton de déconnexion si connecté */}
           <div className="flex items-center justify-end mb-4">
             {user && (
               <button
                 type="button"
                 onClick={handleLogout}
-                className="rounded-full border border-slate-700 bg-slate-900/80 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-slate-800 hover:border-slate-500 transition"
+                className="rounded-full border border-slate-700 bg-slate-900/80 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:border-slate-500 hover:bg-slate-800"
               >
-                Se déconnecter
+                Sign out
               </button>
             )}
           </div>
 
-          {/* HERO */}
           <div className="space-y-4">
-            <h1 className="text-[38px] sm:text-[48px] lg:text-[80px] font-[990] leading-[1.25] tracking-tight">
+            <h1 className="text-[38px] sm:text-[48px] lg:text-[72px] font-[900] leading-[1.15] tracking-tight">
               <span className="block bg-gradient-to-b from-slate-50 via-slate-200 to-slate-600 bg-clip-text text-transparent">
-                Lance ton essai gratuit
+                Ship Your Product Faster
               </span>
               <span className="mt-1 block bg-gradient-to-b from-slate-50 via-slate-200 to-slate-600 bg-clip-text text-transparent">
-                dès aujourd’hui
+                with a plug-and-play SaaS template
               </span>
             </h1>
+            <p className="text-sm text-slate-400 max-w-2xl mx-auto">
+              Authentication, billing, and a clean dashboard are ready out of the box.
+              Swap in your brand and go live.
+            </p>
           </div>
 
-          {/* ---------- PRICING CARD ---------- */}
           <PricingCard
-            isPricingYearly={false} // plus de mode annuel, toujours false
+            isPricingYearly={false}
             currentPlan={currentPlan}
-            oldPrice={oldPrice}
+            oldPrice={compareAtPrice}
             isWaiting={isWaiting}
             onClickCTA={handleStartTrial}
             onClickLogin={handleLoginRedirect}
-            onToggleBillingMode={() => {}} // noop, plus de toggle affiché
+            onToggleBillingMode={() => {}}
           />
         </div>
       </div>
 
-      {/* ---------- POPUP D'AUTH ---------- */}
       <AnimatePresence>
         {showAuthModal && (
           <motion.div
@@ -126,16 +120,14 @@ export default function PricingPage() {
               onClick={(e) => e.stopPropagation()}
               className="relative w-full max-w-md"
             >
-              {/* Bouton fermer */}
               <button
                 type="button"
                 onClick={() => setShowAuthModal(false)}
-                className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-slate-700 bg-slate-900/80 text-slate-300 hover:text-slate-50 hover:border-slate-400 transition"
+                className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-slate-700 bg-slate-900/80 text-slate-300 transition hover:border-slate-400 hover:text-slate-50"
               >
-                ✕
+                ×
               </button>
 
-              {/* AuthSection en mode MODAL */}
               <AuthSection
                 redirectToOverride={authRedirectTo ?? "/saas"}
                 variant="modal"

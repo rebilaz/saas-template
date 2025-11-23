@@ -1,11 +1,12 @@
 // app/start-checkout/page.tsx
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+
 import { checkout } from "@/utils/stripe/checkout";
 
-export default function StartCheckoutPage() {
+function StartCheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -14,17 +15,14 @@ export default function StartCheckoutPage() {
   useEffect(() => {
     async function run() {
       if (!priceId) {
-        // Si pas de priceId → on revient au pricing
         router.push("/pricing");
         return;
       }
 
       try {
-        // 🔥 Lance directement la fonction checkout (qui appelle l’Edge Function Stripe)
         await checkout(priceId);
       } catch (e) {
         console.error(e);
-        // En cas d’erreur → on revient au pricing
         router.push("/pricing");
       }
     }
@@ -34,7 +32,15 @@ export default function StartCheckoutPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center text-white">
-      <p>Redirection vers Stripe Checkout...</p>
+      <p>Redirecting to Stripe Checkout...</p>
     </div>
+  );
+}
+
+export default function StartCheckoutPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen" />}>
+      <StartCheckoutContent />
+    </Suspense>
   );
 }

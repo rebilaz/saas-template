@@ -19,16 +19,26 @@ export function PricingCard({
   onClickLogin,
   onToggleBillingMode,
 }: PricingCardProps) {
+  const formattedPrice = currentPlan.priceInUSD.toLocaleString("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+
+  const formattedOldPrice =
+    typeof oldPrice === "number"
+      ? oldPrice.toLocaleString("en-US", {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        })
+      : null;
+
   return (
     <div className="relative mx-auto max-w-md">
-      {/* Glow extérieur */}
-      <div className="pointer-events-none absolute -bottom-16 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-orange-500/25 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-16 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-sky-500/20 blur-3xl" />
 
-      <div className="relative overflow-hidden rounded-[32px] border border-orange-500/50 bg-gradient-to-b from-slate-900/95 via-slate-950 to-slate-950 shadow-[0_40px_120px_rgba(0,0,0,0.95)] px-6 py-7 sm:px-8 sm:py-8">
-        {/* glossy */}
-        <div className="pointer-events-none absolute -top-40 right-[-80px] h-64 w-64 rounded-full bg-orange-400/12 blur-3xl" />
+      <div className="relative overflow-hidden rounded-[32px] border border-sky-500/40 bg-gradient-to-b from-slate-900/95 via-slate-950 to-slate-950 shadow-[0_40px_120px_rgba(0,0,0,0.95)] px-6 py-7 sm:px-8 sm:py-8">
+        <div className="pointer-events-none absolute -top-40 right-[-80px] h-64 w-64 rounded-full bg-sky-400/12 blur-3xl" />
 
-        {/* HEADER : 7 days trial centré */}
         <div className="relative mb-6 space-y-2 text-center">
           <p className="text-[26px] sm:text-[30px] font-[800] leading-tight tracking-tight">
             <span className="bg-gradient-to-b from-slate-50 via-slate-200 to-slate-400 bg-clip-text text-transparent">
@@ -36,91 +46,76 @@ export function PricingCard({
             </span>
           </p>
           <p className="text-[11px] text-slate-500">
-            {isPricingYearly ? "Facturé annuellement." : "Facturé mensuellement."}
+            {isPricingYearly ? "Billed annually" : "Billed monthly"}
           </p>
         </div>
 
-{/* PRIX : 0€ bien mis en avant, puis 19,99€ barré en dessous */}
-<div className="relative mb-6 space-y-2 text-center">
-  <div className="relative flex items-baseline justify-center gap-2 -translate-y-1 sm:-translate-y-2">
-    {/* Glow derrière le prix */}
-    <div className="pointer-events-none absolute left-1/2 top-1/2 h-20 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-500/30 blur-2xl" />
+        <div className="relative mb-6 space-y-2 text-center">
+          <div className="relative flex items-baseline justify-center gap-2 -translate-y-1 sm:-translate-y-2">
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-20 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-500/30 blur-2xl" />
 
-    <span className="relative text-[64px] sm:text-[82px] font-[800] tracking-tight bg-gradient-to-b from-slate-50 via-slate-100 to-slate-400 bg-clip-text text-transparent drop-shadow-[0_10px_35px_rgba(0,0,0,0.7)]">
-      0
-    </span>
-    <span className="relative text-3xl sm:text-4xl font-semibold text-slate-50">
-      €
-    </span>
-  </div>
+            <span className="relative text-[64px] sm:text-[82px] font-[800] tracking-tight bg-gradient-to-b from-slate-50 via-slate-100 to-slate-400 bg-clip-text text-transparent drop-shadow-[0_10px_35px_rgba(0,0,0,0.7)]">
+              ${formattedPrice}
+            </span>
+            <span className="relative text-xl sm:text-2xl font-semibold text-slate-50">
+              /mo
+            </span>
+          </div>
 
-  <p className="text-sm sm:text-base font-semibold text-slate-400">
-    puis{" "}
-    <span className="line-through">
-      19,99&nbsp;€ /mo
-    </span>
-  </p>
-</div>
+          {formattedOldPrice && (
+            <p className="text-sm sm:text-base font-semibold text-slate-400">
+              Intro price, was{" "}
+              <span className="line-through">${formattedOldPrice}/mo</span>
+            </p>
+          )}
+        </div>
 
-
-        {/* CTA */}
         <button
-          className="mb-6 w-full rounded-2xl bg-[#ff9143] py-3 text-sm font-semibold text-slate-950 shadow-[0_0_45px_rgba(253,186,116,0.9)] transition hover:brightness-110 hover:shadow-[0_0_60px_rgba(253,186,116,1)] disabled:opacity-60"
+          className="mb-6 w-full rounded-2xl bg-sky-500 py-3 text-sm font-semibold text-slate-950 shadow-[0_0_45px_rgba(14,165,233,0.8)] transition hover:brightness-110 hover:shadow-[0_0_60px_rgba(14,165,233,1)] disabled:opacity-60"
           onClick={onClickCTA}
           disabled={isWaiting}
         >
-          {isWaiting ? "Redirection vers le paiement…" : "Commencer l’essai gratuit"}
+          {isWaiting ? "Preparing checkout..." : "Start free trial"}
         </button>
 
-        {/* PANEL FEATURES */}
         <div className="relative space-y-3 rounded-3xl border border-slate-800 bg-slate-950/95 px-4 py-4">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-            Inclus
+            What’s included
           </p>
 
           <ul className="space-y-2 text-sm text-slate-200">
-            <FeatureItem
-              text={
-                isPricingYearly
-                  ? "Analyse illimitée de vidéos pendant la période active"
-                  : "Jusqu’à 30 analyses de vidéos par mois"
-              }
-              positive
-            />
-            <FeatureItem text="Niche Finder & analyse des chaînes" positive />
-            <FeatureItem text="Génération d’idées & scripts optimisés" positive />
-            <FeatureItem text="Analyse de monétisation & RPM estimé" positive />
-            <FeatureItem text="Tags & prompts optimisés pour l’algorithme" positive />
+            <FeatureItem text="Supabase email + Google auth" positive />
+            <FeatureItem text="Stripe checkout ready to plug price IDs" positive />
+            <FeatureItem text="Dashboard layout with navigation and user menu" positive />
+            <FeatureItem text="Billing & account panel scaffold" positive />
+            <FeatureItem text="Protected app routes under /saas" positive />
           </ul>
 
           <p className="pt-1 text-[11px] text-slate-500">
-            Déjà un compte ou un essai en cours ?{" "}
+            Already have an account?{" "}
             <button
               type="button"
               onClick={onClickLogin}
-              className="text-orange-300 underline-offset-2 hover:text-orange-200 hover:underline"
+              className="text-sky-300 underline-offset-2 hover:text-sky-200 hover:underline"
             >
-              Connecte-toi ici.
+              Sign in here.
             </button>
           </p>
         </div>
 
-        {/* BAS DE CARTE */}
         <button
           type="button"
           onClick={onToggleBillingMode}
           className="mt-5 w-full text-center text-[11px] text-slate-400 underline-offset-2 hover:text-slate-200 hover:underline"
         >
           {isPricingYearly
-            ? "Voir la facturation mensuelle ↗"
-            : "Voir la facturation annuelle ↗"}
+            ? "Switch to monthly pricing"
+            : "See yearly pricing"}
         </button>
       </div>
     </div>
   );
 }
-
-/* ---------- Sous-composant : FeatureItem ---------- */
 
 function FeatureItem({
   text,

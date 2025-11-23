@@ -1,135 +1,129 @@
-"use client";
+import { createSupabaseServer } from "@/lib/supabase/server";
 
-import Link from "next/link";
+type Profile = {
+  role?: string | null;
+  subscription_status?: string | null;
+  trial_end?: string | null;
+};
 
-const features = [
-  { title: "Recherche de niche", href: "/saas/nichefinder" },
-  { title: "Miniatures", href: "/saas/thumbnail" },
-  { title: "Extension", href: "/saas/extension" },
-];
+function formatStatus(profile?: Profile | null) {
+  const status = profile?.subscription_status;
 
-export default function SaasHomePage() {
+  if (status === "active") return "Active subscription";
+  if (status === "trialing") return "Trialing";
+  if (status === "past_due") return "Payment past due";
+  if (status === "canceled") return "Canceled";
+  return "Not subscribed";
+}
+
+export default async function SaasHomePage() {
+  const supabase = await createSupabaseServer();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const demoPriceId =
+    process.env.NEXT_PUBLIC_STRIPE_PRICE_MONTHLY || "price_placeholder";
+
+  const { data: profile } = user
+    ? await supabase
+        .from("profiles")
+        .select("role, subscription_status, trial_end")
+        .eq("id", user.id)
+        .maybeSingle<Profile>()
+    : { data: null };
+
+  const subscriptionStatus = formatStatus(profile);
+
   return (
     <div className="w-full px-6 md:px-10 lg:px-14">
-      <div className="mx-auto flex max-w-6xl flex-col gap-20 pb-28 pt-14">
+      <div className="mx-auto flex max-w-6xl flex-col gap-12 pb-24 pt-14">
+        <header className="space-y-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+            Dashboard
+          </p>
+          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-slate-50 tracking-tight">
+            Your SaaS workspace is ready.
+          </h1>
+          <p className="max-w-2xl text-sm text-slate-400">
+            You have Supabase authentication, Stripe checkout, and the core UI
+            shell wired up. Swap the copy, connect your keys, and start shipping
+            features for your product.
+          </p>
+        </header>
 
-        {/* ------------------ HERO ------------------ */}
-        <section>
-          <div className="flex flex-col items-start gap-16 lg:flex-row lg:items-center lg:gap-24">
-            {/* TEXT */}
-            <div className="w-full space-y-7 lg:w-1/2">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight text-slate-50 tracking-tight">
-                Upgrade ta chaîne{" "}
-                <span className="text-orange-400">YouTube</span>.
-              </h1>
-
-              <p className="max-w-md text-[15px] text-slate-300">
-                Idée → miniature → publication. Tout en un seul endroit.
-              </p>
-
-              <Link
-                href="/saas/nichefinder"
-                className="
-                  inline-flex items-center gap-2 rounded-full
-                  bg-sky-500 px-7 py-3 text-sm font-semibold text-slate-950
-                  shadow-[0_18px_45px_rgba(12,74,110,0.65)]
-                  transition hover:bg-sky-400 hover:shadow-[0_22px_60px_rgba(12,74,110,0.9)]
-                "
-              >
-                Commencer →
-              </Link>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <section className="rounded-2xl border border-slate-800/80 bg-slate-950/80 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.7)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+              Account
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-slate-50">
+              Signed in as {user?.email ?? "your user"}
+            </h2>
+            <p className="mt-2 text-sm text-slate-400">
+              Role:{" "}
+              <span className="text-slate-100">
+                {profile?.role ?? "member"}
+              </span>
+            </p>
+            <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/70 p-4 text-sm text-slate-200">
+              Subscription status: {subscriptionStatus}
             </div>
+          </section>
 
-            {/* WORKFLOW */}
-            <div className="w-full lg:w-1/2">
-              <div className="relative mx-auto w-full max-w-lg">
-                <div className="absolute -inset-0.5 rounded-3xl bg-gradient-to-tr from-orange-500/35 via-purple-500/30 to-fuchsia-500/35 opacity-60 blur-2xl" />
-
-                <div className="relative rounded-3xl border border-slate-900/90 bg-slate-950/85 px-6 py-7 shadow-[0_24px_80px_rgba(0,0,0,0.9)] backdrop-blur">
-                  <div className="mb-6 flex items-center justify-between">
-                    <h2 className="text-sm font-semibold text-slate-50">
-                      Ta prochaine vidéo
-                    </h2>
-                    <div className="flex items-center gap-1.5">
-                      <div className="h-2 w-2 rounded-full bg-emerald-400" />
-                      <div className="h-2 w-2 rounded-full bg-amber-400" />
-                      <div className="h-2 w-2 rounded-full bg-rose-400" />
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <WorkflowItem step="1" text="Trouve l’idée avec Niche Finder." color="sky" />
-                    <WorkflowItem step="2" text="Génère la miniature en quelques secondes." color="emerald" />
-                    <WorkflowItem step="3" text="Publie et optimise depuis YouTube." color="purple" />
-                  </div>
-
-                  <p className="mt-5 text-[11px] text-slate-500">3 étapes. Zéro friction.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ---------------- ESPACE SUPPLÉMENTAIRE ---------------- */}
-        <div className="h-10 md:h-16 lg:h-24"></div>
-
-        {/* ------------------ MODULES ------------------ */}
-        <section>
-          <div className="grid grid-cols-1 gap-7 md:grid-cols-3">
-
-            {features.map((feature) => (
-              <Link
-                key={feature.title}
-                href={feature.href}
-                className="
-                  group relative flex h-40 flex-col justify-between
-                  rounded-3xl p-7
-                  border border-slate-900/90 bg-slate-950/85
-                  shadow-[0_18px_60px_rgba(0,0,0,0.9)]
-                  transition-transform transition-shadow
-                  hover:-translate-y-2 hover:border-orange-500/70
-                  hover:shadow-[0_24px_80px_rgba(0,0,0,1)]
-                "
+          <section className="rounded-2xl border border-slate-800/80 bg-slate-950/80 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.7)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+              Billing
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-slate-50">
+              Connect Stripe to go live
+            </h2>
+            <p className="mt-2 text-sm text-slate-400">
+              Update the price IDs in <code>utils/stripe/configuration.ts</code>{" "}
+              and add your Stripe keys to the environment. The checkout and
+              billing panel are already wired to Supabase auth.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <a
+                href="/pricing"
+                className="inline-flex items-center justify-center rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-[0_12px_30px_rgba(14,165,233,0.35)] transition hover:bg-sky-400"
               >
-                <h3 className="text-lg font-semibold text-slate-50 tracking-tight">
-                  {feature.title}
-                </h3>
+                View pricing page
+              </a>
+              <a
+                href={`/start-checkout?priceId=${demoPriceId}`}
+                className="inline-flex items-center justify-center rounded-full border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-100 hover:border-slate-700 hover:bg-slate-800 transition"
+              >
+                Trigger checkout (demo)
+              </a>
+            </div>
+          </section>
+        </div>
 
-                <div className="flex items-center justify-between pt-2">
-                  <span className="text-xs text-slate-500">Ouvrir</span>
-                  <span className="
-                    inline-flex h-10 w-10 items-center justify-center
-                    rounded-full border border-slate-700 text-[14px] text-slate-400
-                    transition group-hover:border-orange-400/90 
-                    group-hover:text-orange-300 group-hover:bg-orange-500/5
-                  ">
-                    →
-                  </span>
-                </div>
-              </Link>
-            ))}
-
-          </div>
+        <section className="grid grid-cols-1 gap-4 rounded-2xl border border-slate-800/80 bg-slate-950/80 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.7)] sm:grid-cols-3">
+          <StepCard
+            title="1. Configure env"
+            body="Copy .env.example, add your Supabase and Stripe keys, and set NEXT_PUBLIC_APP_URL."
+          />
+          <StepCard
+            title="2. Wire data"
+            body="Use Supabase client/server helpers in lib/supabase to fetch profile data or build new features."
+          />
+          <StepCard
+            title="3. Ship"
+            body="Replace the placeholder copy and start adding your product modules inside the /saas area."
+          />
         </section>
-
       </div>
     </div>
   );
 }
 
-function WorkflowItem({ step, text, color }: any) {
-  const colors: any = {
-    sky: "border-sky-500/50 bg-sky-500/15 text-sky-200",
-    emerald: "border-emerald-500/45 bg-emerald-500/10 text-emerald-200",
-    purple: "border-purple-500/45 bg-purple-500/10 text-purple-200",
-  };
-
+function StepCard({ title, body }: { title: string; body: string }) {
   return (
-    <div className="flex items-center gap-4 rounded-2xl border border-slate-800 bg-slate-950/90 p-4">
-      <div className={`flex h-9 w-9 items-center justify-center rounded-xl border ${colors[color]} text-xs font-semibold`}>
-        {step}
-      </div>
-      <p className="text-xs text-slate-100">{text}</p>
+    <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-4">
+      <p className="text-sm font-semibold text-slate-50">{title}</p>
+      <p className="mt-2 text-xs text-slate-400">{body}</p>
     </div>
   );
 }
