@@ -1,0 +1,20 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-thumb" x1="4" y1="4" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FF5F6D"/>
+      <stop offset="1" stop-color="#FFC371"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Cadre -->
+  <rect x="4" y="5" width="16" height="14" rx="3.2"
+        stroke="url(#grad-thumb)" stroke-width="1.8"
+        fill="rgba(15,23,42,0.9)"/>
+
+  <!-- Soleil -->
+  <circle cx="9" cy="10" r="1.6" fill="#FFC371"/>
+
+  <!-- Montagnes -->
+  <path d="M7 16L10 12.5L12.8 15.6L14.6 13.6L17 16H7Z"
+        fill="url(#grad-thumb)"/>
+</svg>

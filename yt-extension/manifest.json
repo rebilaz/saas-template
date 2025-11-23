@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube RPM Estimator",
+  "version": "1.0.0",
+  "description": "Affiche une estimation de RPM / revenus sur les vidéos YouTube.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://*.youtube.com/*",
+    "https://vzgehyyounqqnzjlvaxj.supabase.co/*",
+    "https://yt-scale.vercel.app/*",
+    "http://localhost:3000/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://*.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://yt-scale.vercel.app/*", "http://localhost:3000/*"],
+      "js": ["site-bridge.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

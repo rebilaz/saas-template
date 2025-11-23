@@ -1,0 +1,17 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-ext" x1="4" y1="4" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FF4D4D"/>
+      <stop offset="1" stop-color="#FF9F5A"/>
+    </linearGradient>
+  </defs>
+
+  <path
+    d="M9.2 4.5H8.5C7.1 4.5 6.4 4.5 5.9 4.8C5.4 5.1 5.1 5.6 5 6.2C5 6.8 5 7.5 5 8.9V9.2C6.1 9.3 6.9 10.2 6.9 11.3C6.9 12.4 6.1 13.3 5 13.4V13.7C5 15.1 5 15.8 5.3 16.3C5.6 16.8 6.1 17.1 6.7 17.2C7.3 17.2 8 17.2 9.4 17.2H9.7C9.8 16.1 10.7 15.3 11.8 15.3C12.9 15.3 13.8 16.1 13.9 17.2H14.2C15.6 17.2 16.3 17.2 16.8 16.9C17.3 16.6 17.6 16.1 17.7 15.5C17.7 14.9 17.7 14.2 17.7 12.8V12.5C16.6 12.4 15.8 11.5 15.8 10.4C15.8 9.3 16.6 8.4 17.7 8.3V8C17.7 6.6 17.7 5.9 17.4 5.4C17.1 4.9 16.6 4.6 16 4.5C15.4 4.5 14.7 4.5 13.3 4.5H13C12.9 5.6 12 6.4 10.9 6.4C9.8 6.4 8.9 5.6 9.2 4.5Z"
+    stroke="url(#grad-ext)"
+    stroke-width="1.7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="rgba(15,23,42,0.95)"
+  />
+</svg>
